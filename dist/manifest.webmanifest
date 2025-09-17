@@ -1,0 +1,16 @@
+{
+  "name": "Waiko International",
+  "short_name": "Waiko",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#18181b",
+  "theme_color": "#2563eb",
+  "description": "Waiko International - High-tech Engineering & Construction",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml"
+    }
+  ]
+} 
