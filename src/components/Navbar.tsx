@@ -1,0 +1,289 @@
+import React, { useState, useLayoutEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import {
+  Menu,
+  X,
+  Home,
+  Info,
+  Hammer,
+  BookCheck,
+  Phone,
+  Anchor,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const Navbar: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+
+  const navLinks = [
+    { name: 'Home', path: '/', icon: <Home size={18} /> },
+    { name: 'Projects', path: '/projects', icon: <Hammer size={18} /> },
+    { name: 'Post-Tensioning', path: '/post-tensioning', icon: <Anchor size={18} /> },
+    { name: 'Certificates', path: '/certificates', icon: <BookCheck size={18} /> },
+    { name: 'About', path: '/about', icon: <Info size={18} /> },
+    { name: 'Contact', path: '/contact', icon: <Phone size={18} /> },
+  ];
+
+  useLayoutEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+
+  return (
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ 
+        y: 0,
+        boxShadow: scrolled ? '0 4px 32px rgba(0,0,0,0.15)' : 'none',
+        backdropFilter: scrolled ? 'blur(20px)' : 'blur(0px)',
+      }}
+      transition={{ 
+        type: 'spring', 
+        stiffness: 300, 
+        damping: 30,
+        backdropFilter: { duration: 0.3 }
+      }}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b ${scrolled ? 'border-white/30' : 'border-transparent'}`}
+      style={{
+        background: scrolled 
+          ? 'rgba(255,255,255,0.95)' 
+          : 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(239, 246, 255, 0.7) 50%, rgba(245, 243, 255, 0.7) 100%)'
+      }}
+    >
+      {/* Background pattern for navbar */}
+      <div 
+        className="absolute inset-0 opacity-5 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(circle at 15% 25%, #2563eb 0%, transparent 8%),
+            radial-gradient(circle at 85% 75%, #ff3b3f 0%, transparent 8%),
+            radial-gradient(circle at 50% 50%, #a78bfa 0%, transparent 10%),
+            linear-gradient(45deg, transparent 40%, rgba(37, 99, 235, 0.05) 50%, transparent 60%),
+            linear-gradient(135deg, transparent 40%, rgba(255, 59, 63, 0.05) 50%, transparent 60%)
+          `,
+          backgroundSize: '100% 100%, 100% 100%, 100% 100%, 30px 30px, 30px 30px'
+        }}
+      />
+      <div className="max-w-[100vw] w-full px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div
+          className={`flex justify-between items-center transition-all duration-300 ${
+            scrolled ? 'h-14 sm:h-16' : 'h-20 sm:h-24'
+          }`}
+        >
+          {/* Logo and Branding */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <motion.div
+              className="relative cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link to="/">
+                <motion.svg
+                  width={scrolled ? (window.innerWidth < 640 ? 32 : 42) : (window.innerWidth < 640 ? 36 : 48)}
+                  height={scrolled ? (window.innerWidth < 640 ? 32 : 42) : (window.innerWidth < 640 ? 36 : 48)}
+                  viewBox="0 0 100 100"
+                  className="text-accent-blue"
+                  initial={{ scale: 0.8 }}
+                  animate={{
+                    scale: scrolled ? 0.9 : 1,
+                  }}
+                  transition={{
+                    scale: { 
+                      duration: 0.3,
+                      type: "spring"
+                    },
+                  }}
+                >
+                  <image href="/logo.png" x="0" y="0" width="100" height="100" />
+                  <motion.circle
+                    cx="50"
+                    cy="50"
+                    r="55"
+                    fill="none"
+                    stroke="url(#gradient)"
+                    strokeWidth="2"
+                    initial={{ strokeDashoffset: 100 }}
+                    animate={{ strokeDashoffset: 0 }}
+                    transition={{ duration: 2 }}
+                    strokeDasharray="345"
+                  />
+                  <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#2563eb" />
+                      <stop offset="50%" stopColor="#a78bfa" />
+                      <stop offset="100%" stopColor="#ff3b3f" />
+                    </linearGradient>
+                  </defs>
+                </motion.svg>
+              </Link>
+            </motion.div>
+            
+            <div className="flex flex-col">
+              <motion.div
+                className="font-orbitron font-bold tracking-tight whitespace-nowrap drop-shadow-md"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ 
+                  opacity: 1, 
+                  y: 0,
+                  fontSize: scrolled ? (window.innerWidth < 640 ? '0.9rem' : '1.15rem') : (window.innerWidth < 640 ? '1.1rem' : '1.35rem')
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <span className="text-blue-900">WAIKO</span>{' '}
+                <span className="text-red-500">INTERNATIONAL</span>
+              </motion.div>
+              
+              {/* Subtitle added under the main title */}
+              <motion.div
+                className="font-orbitron text-xs font-medium tracking-wider drop-shadow-sm"
+                initial={{ opacity: 0 }}
+                animate={{ 
+                  opacity: 1,
+                  fontSize: scrolled ? (window.innerWidth < 640 ? '0.45rem' : '0.5rem') : (window.innerWidth < 640 ? '0.5rem' : '0.55rem')
+                }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+              >
+                <span className="text-blue-700">Engineering</span>{' '}
+                <span className="text-purple-600">Excellence</span>{' '}
+                <span className="text-red-400">Guaranteed</span>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Desktop Nav - Aligned to the right */}
+          <div className="hidden md:flex items-center space-x-1 lg:space-x-2 ml-auto">
+            {navLinks.map((link, index) => {
+              const isActive =
+                location.pathname === link.path ||
+                (link.path !== '/' && location.pathname.startsWith(link.path));
+              return (
+                <motion.div
+                  key={link.path}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ 
+                    opacity: 1, 
+                    y: 0,
+                    scale: isActive ? 1.05 : 1,
+                    boxShadow: isActive 
+                      ? '0 4px 24px rgba(37, 99, 235, 0.25)' 
+                      : 'none'
+                  }}
+                  transition={{ 
+                    delay: 0.1 * index,
+                    type: 'spring',
+                    stiffness: isActive ? 400 : 300,
+                    damping: 24
+                  }}
+                  layout
+                  whileHover={{ y: -2 }}
+                  className={`px-2 lg:px-4 py-2 rounded-lg lg:rounded-xl text-xs lg:text-sm font-bold backdrop-blur-md transition-all ${
+                    isActive
+                      ? 'border border-blue-200/50 shadow-glass bg-gradient-to-r from-blue-50/80 to-purple-50/80 text-blue-900'
+                      : 'text-gray-700 hover:bg-white/50 border border-transparent hover:border-white/30'
+                  }`}
+                >
+                  <Link to={link.path} className="flex items-center gap-1 lg:gap-2">
+                    {React.cloneElement(link.icon, { size: window.innerWidth >= 1024 ? 18 : 16 })}
+                    <span className={scrolled ? 'text-xs' : 'text-xs lg:text-sm'}>
+                      {link.name}
+                    </span>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Right Icons - Mobile Menu Button */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <button
+              onClick={toggleMenu}
+              className="md:hidden text-gray-800 p-1.5 sm:p-2 rounded-lg hover:bg-white/50 transition-colors"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+            >
+              <motion.div
+                initial={false}
+                animate={{ rotate: isOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {isOpen ? <X size={20} /> : <Menu size={20} />}
+              </motion.div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Nav with enhanced animation */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ 
+              opacity: 1, 
+              height: 'auto',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+            }}
+            exit={{ 
+              opacity: 0, 
+              height: 0,
+              transition: { duration: 0.2 }
+            }}
+            transition={{ 
+              duration: 0.3,
+              ease: "easeInOut"
+            }}
+            className="md:hidden bg-white/95 backdrop-blur-xl border-t border-white/30 overflow-hidden"
+          >
+            <div className="px-3 sm:px-4 py-2 sm:py-3 space-y-1">
+              {navLinks.map((link) => {
+                const isActive =
+                  location.pathname === link.path ||
+                  (link.path !== '/' && location.pathname.startsWith(link.path));
+                return (
+                  <motion.div 
+                    key={link.path} 
+                    className="relative"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.2 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Link
+                      to={link.path}
+                      className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all ${
+                        isActive
+                          ? 'text-blue-700 bg-blue-50/80 font-bold'
+                          : 'text-gray-700 hover:text-blue-600 hover:bg-white/50'
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <div className={`flex-shrink-0 p-1.5 sm:p-2 rounded-md sm:rounded-lg ${isActive ? 'bg-blue-100' : 'bg-gray-100'}`}>
+                        {React.cloneElement(link.icon, { size: 16 })}
+                      </div>
+                      <span className="truncate">{link.name}</span>
+                      {isActive && (
+                        <motion.div
+                          className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 -z-10"
+                          layoutId="mobileNavIndicator"
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
+  );
+};
+
+export default Navbar;
