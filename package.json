@@ -7,8 +7,6 @@
     "build": "chmod +x ./node_modules/.bin/vite && vite build",
     "preview": "vite preview"
   },
-
-
   "dependencies": {
     "@fontsource/inter": "^5.2.6",
     "@fontsource/orbitron": "^5.2.6",
