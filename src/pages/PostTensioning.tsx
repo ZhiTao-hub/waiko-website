@@ -1,12 +1,69 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import AnchorTypeCard from '../components/AnchorTypeCard';
 import MRTProjectsSection from '../components/MRTProjectsSection';
 import { motion, AnimatePresence } from 'framer-motion';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import OptimizedImage from '../components/OptimizedImage';
+import OptimizedMotion from '../components/OptimizedMotion';
+import useOptimizedAOS from '../hooks/useOptimizedAOS';
+import { preloadCriticalResources } from '../utils/performance';
 import PageHero from '../components/PageHero';
 import { Target } from 'lucide-react';
 import ReactDOM from 'react-dom';
+
+// Add this component before the main PostTensioning component
+const MobileExcellenceCard = () => {
+  return (
+    <div className="lg:hidden bg-white/95 backdrop-blur-xl rounded-2xl border-2 border-accent-blue/30 shadow-lg p-6 my-8">
+      <h3 className="text-xl font-orbitron font-bold text-gray-900 mb-4 text-center">
+        Global Excellence
+      </h3>
+
+      <div className="space-y-4">
+        <div className="flex items-start">
+          <div className="bg-accent-blue/10 p-2 rounded-lg mr-3 flex-shrink-0">
+            <span className="text-xl">🌍</span>
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-800">Worldwide Deployment</h4>
+            <p className="text-sm text-gray-600 mt-1">
+              Post-tensioning systems employed across five continents in bridges,
+              buildings, and specialized structures.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start">
+          <div className="bg-accent-blue/10 p-2 rounded-lg mr-3 flex-shrink-0">
+            <span className="text-xl">✅</span>
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-800">Technical Standards</h4>
+            <p className="text-sm text-gray-600 mt-1">
+              Full compliance with European Technical Approval (ETA) and
+              comprehensive CE markings.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start">
+          <div className="bg-accent-blue/10 p-2 rounded-lg mr-3 flex-shrink-0">
+            <span className="text-xl">🔧</span>
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-800">Advanced Systems</h4>
+            <p className="text-sm text-gray-600 mt-1">
+              Multi-strand tendon systems with comprehensive anchorage solutions
+              for diverse applications.
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  );
+};
+
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 80, scale: 0.9 },
@@ -121,13 +178,19 @@ const PostTensioning: React.FC = () => {
     }
   ];
 
+  // Use optimized AOS
+  useOptimizedAOS({ duration: 600, once: true, offset: 40 });
+
+  // Preload critical images
+  const criticalImages = useMemo(() => [
+    "/images/post-tensioning/post_Intro.jpg",
+    "/images/post-tensioning/post_intro2.jpg",
+    "/images/post-tensioning/Anchors/Anchors_1.png"
+  ], []);
+
   useEffect(() => {
-    AOS.init({
-      duration: 900,
-      once: true,
-      offset: 40
-    });
-  }, []);
+    preloadCriticalResources(criticalImages);
+  }, [criticalImages]);
 
   const [selectedEquipment, setSelectedEquipment] = useState<{ label: string; modalImages?: string[] } | null>(null);
   const timelineEvents = [
@@ -147,7 +210,7 @@ const PostTensioning: React.FC = () => {
     <div className="relative">
       {/* Enhanced Background with Blue & Red Gradients */}
       <div className="fixed inset-0 -z-50 bg-gradient-to-br from-accent-blue/20 via-white to-accent-red/20"></div>
-      
+
       {/* Enhanced Animated Background Elements */}
       <div className="fixed inset-0 -z-40">
         {/* Enhanced Grid Pattern with Blue & Red */}
@@ -181,7 +244,7 @@ const PostTensioning: React.FC = () => {
             <rect width="100%" height="100%" fill="url(#posttensioning-grid-pattern)" />
           </svg>
         </div>
-        
+
         {/* Secondary Grid Pattern for Depth */}
         <div className="absolute inset-0 opacity-10">
           <svg className="w-full h-full">
@@ -194,18 +257,18 @@ const PostTensioning: React.FC = () => {
             <rect width="100%" height="100%" fill="url(#posttensioning-secondary-grid)" />
           </svg>
         </div>
-        
+
         {/* Static Animated Gradient Orbs */}
         <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-accent-blue/30 to-purple-500/20 rounded-full blur-3xl opacity-60" />
         <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-tl from-accent-red/30 to-pink-500/20 rounded-full blur-3xl opacity-50" />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-accent-blue/20 to-accent-red/20 rounded-full blur-2xl opacity-40" />
-        
+
         {/* Static Floating Geometric Elements */}
         <div className="absolute top-1/4 right-1/4 w-8 h-8 bg-gradient-to-r from-accent-blue/40 to-accent-red/40 rotate-45 opacity-30" />
         <div className="absolute bottom-1/3 left-1/3 w-6 h-6 bg-gradient-to-r from-accent-red/40 to-accent-blue/40 rounded-full opacity-25" />
         <div className="absolute top-2/3 left-1/5 w-4 h-16 bg-gradient-to-b from-accent-blue/30 to-transparent rounded-full opacity-20" />
       </div>
-      
+
       {/* Content with higher z-index */}
       <div className="relative z-10">
         {/* Full Page Hero */}
@@ -224,7 +287,7 @@ const PostTensioning: React.FC = () => {
           {/* Consistent Grid Background - Anchorage */}
           <div className="pointer-events-none absolute inset-0 -z-10">
             <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/10 via-white/95 to-accent-red/10" />
-            
+
             {/* Consistent Grid Pattern */}
             <div className="absolute inset-0 opacity-15">
               <svg className="w-full h-full" aria-hidden="true">
@@ -255,7 +318,7 @@ const PostTensioning: React.FC = () => {
                 <rect width="100%" height="100%" fill="url(#anchorage-grid-pattern)" />
               </svg>
             </div>
-            
+
             <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-br from-accent-blue/25 to-purple-500/15 blur-3xl rounded-full opacity-60" />
             <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-gradient-to-tl from-accent-red/25 to-pink-500/15 blur-3xl rounded-full opacity-50" />
           </div>
@@ -540,7 +603,7 @@ const PostTensioning: React.FC = () => {
               </motion.div>
             </div>
 
-            {/* Enhanced 3D Flip Card with Premium Design */}
+            {/* Enhanced Global Excellence Section - Inline Toggle */}
             <motion.div
               className="relative w-full mt-16"
               initial={{ opacity: 0, y: 40 }}
@@ -549,315 +612,245 @@ const PostTensioning: React.FC = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
             >
               {(() => {
-                const [flipped, setFlipped] = React.useState(false);
-                const [autoFlip, setAutoFlip] = React.useState(true);
-                const [isHovering, setIsHovering] = React.useState(false);
-
-                // Auto-flip every 8 seconds
-                React.useEffect(() => {
-                  if (!autoFlip) return;
-                  const interval = setInterval(() => {
-                    setFlipped(f => !f);
-                  }, 8000);
-                  return () => clearInterval(interval);
-                }, [autoFlip]);
+                const [showDetails, setShowDetails] = React.useState(false);
 
                 return (
-                  <motion.div
-                    className="relative w-full cursor-pointer group"
-                    style={{ perspective: 2000 }}
-                    onClick={() => {
-                      setFlipped(f => !f);
-                      setAutoFlip(false);
-                    }}
-                    onMouseEnter={() => {
-                      setIsHovering(true);
-                      if (autoFlip) {
-                        setFlipped(true);
-                        setAutoFlip(false);
-                      }
-                    }}
-                    onMouseLeave={() => {
-                      setIsHovering(false);
-                      setTimeout(() => setAutoFlip(true), 3000);
-                    }}
-                  >
+                  <>
                     {/* Ambient glow effect */}
-                    <motion.div
-                      className="absolute inset-0 rounded-3xl blur-2xl opacity-30"
-                      animate={{
-                        background: flipped
-                          ? "linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(239, 68, 68, 0.3))"
-                          : "linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2))",
-                        scale: isHovering ? 1.05 : 1,
-                      }}
-                      transition={{ duration: 0.6 }}
-                    />
+                    <div className="absolute inset-0 rounded-3xl blur-2xl opacity-20 bg-gradient-to-r from-accent-blue/30 to-accent-red/30"></div>
 
-                    {/* Enhanced flip card container */}
+                    {/* Main container with premium design */}
                     <motion.div
-                      className="relative w-full h-[350px] sm:h-[400px] lg:h-[500px] rounded-2xl sm:rounded-3xl shadow-2xl"
+                      className="relative bg-white/95 backdrop-blur-xl rounded-3xl border-2 border-accent-blue/30 shadow-2xl overflow-hidden"
                       animate={{
-                        rotateY: flipped ? 180 : 0,
-                        scale: isHovering ? 1.02 : 1,
+                        height: showDetails ? "auto" : "auto"
                       }}
-                      transition={{
-                        type: 'spring',
-                        stiffness: 200,
-                        damping: 20,
-                        scale: { duration: 0.3 }
-                      }}
-                      style={{ transformStyle: 'preserve-3d' }}
+                      transition={{ duration: 0.6, ease: "easeInOut" }}
                     >
-                      {/* Front: Enhanced Image with Premium Effects */}
-                      <div
-                        className="absolute inset-0 w-full h-full rounded-3xl overflow-hidden shadow-2xl"
-                        style={{ backfaceVisibility: 'hidden' }}
-                      >
-                        {/* Background image with parallax effect */}
-                        <motion.div
-                          className="absolute inset-0"
-                          animate={{
-                            scale: isHovering ? 1.1 : 1,
-                          }}
-                          transition={{ duration: 0.8 }}
-                        >
-                          <img
-                            src="/images/post-tensioning/post_intro2.jpg"
-                            alt="Post Tensioning Project"
-                            className="object-cover w-full h-full"
-                          />
-                        </motion.div>
+                      {/* Decorative corner elements */}
+                      <div className="absolute top-0 left-0 w-24 h-24 border-l-4 border-t-4 border-accent-blue rounded-tl-3xl opacity-60"></div>
+                      <div className="absolute top-0 right-0 w-24 h-24 border-r-4 border-t-4 border-accent-red rounded-tr-3xl opacity-60"></div>
+                      <div className="absolute bottom-0 left-0 w-24 h-24 border-l-4 border-b-4 border-accent-red rounded-bl-3xl opacity-60"></div>
+                      <div className="absolute bottom-0 right-0 w-24 h-24 border-r-4 border-b-4 border-accent-blue rounded-br-3xl opacity-60"></div>
 
-                        {/* Enhanced gradient overlay with animation */}
-                        <motion.div
-                          className="absolute inset-0"
-                          animate={{
-                            background: isHovering
-                              ? "linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(59,130,246,0.4) 50%, rgba(239,68,68,0.3) 100%)"
-                              : "linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(59,130,246,0.2) 100%)"
-                          }}
-                          transition={{ duration: 0.6 }}
-                        />
-
-                        {/* Animated corner elements */}
-                        <motion.div
-                          className="absolute top-6 left-6 w-16 h-16 border-l-4 border-t-4 border-white/90 rounded-tl-2xl"
-                          animate={{
-                            borderColor: isHovering ? "rgba(59, 130, 246, 0.9)" : "rgba(255, 255, 255, 0.9)",
-                            scale: isHovering ? 1.1 : 1,
-                          }}
-                          transition={{ duration: 0.3 }}
-                        />
-                        <motion.div
-                          className="absolute bottom-6 right-6 w-16 h-16 border-r-4 border-b-4 border-white/90 rounded-br-2xl"
-                          animate={{
-                            borderColor: isHovering ? "rgba(239, 68, 68, 0.9)" : "rgba(255, 255, 255, 0.9)",
-                            scale: isHovering ? 1.1 : 1,
-                          }}
-                          transition={{ duration: 0.3 }}
-                        />
-
-                        {/* Enhanced center content */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-4 sm:p-6 lg:p-8">
-                          <motion.h3
-                            className="text-2xl sm:text-3xl lg:text-4xl font-orbitron font-bold mb-3 sm:mb-4"
-                            animate={{
-                              scale: isHovering ? 1.05 : 1,
-                              textShadow: isHovering ? "0 0 20px rgba(255,255,255,0.5)" : "0 0 10px rgba(0,0,0,0.5)"
-                            }}
-                            transition={{ duration: 0.3 }}
-                          >
-                            Global Excellence
-                          </motion.h3>
-                          <motion.div
-                            className="w-24 h-1 bg-gradient-to-r from-accent-blue to-accent-red rounded-full mb-6"
-                            animate={{
-                              width: isHovering ? "8rem" : "6rem",
-                              boxShadow: isHovering ? "0 0 20px rgba(59, 130, 246, 0.6)" : "none"
-                            }}
-                            transition={{ duration: 0.3 }}
-                          />
-                          <motion.p
-                            className="text-sm sm:text-base lg:text-lg opacity-90 max-w-md"
-                            animate={{
-                              opacity: isHovering ? 1 : 0.9,
-                            }}
-                          >
-                            Worldwide deployment of advanced post-tensioning solutions
-                          </motion.p>
-                        </div>
-
-                        {/* Enhanced click indicator */}
-                        <motion.div
-                          className="absolute bottom-6 left-6 bg-white/20 backdrop-blur-md rounded-full px-6 py-3 border border-white/30"
-                          animate={{
-                            opacity: [0.6, 1, 0.6],
-                            scale: isHovering ? 1.05 : 1,
-                          }}
-                          transition={{
-                            opacity: { duration: 2, repeat: Infinity },
-                            scale: { duration: 0.3 }
-                          }}
-                        >
-                          <span className="text-white text-sm font-medium flex items-center gap-2">
-                            <span>Click to explore</span>
-                            <motion.span
-                              animate={{ x: [0, 5, 0] }}
-                              transition={{ duration: 1.5, repeat: Infinity }}
-                            >
-                              →
-                            </motion.span>
-                          </span>
-                        </motion.div>
+                      {/* Pattern overlay */}
+                      <div className="absolute inset-0 opacity-5">
+                        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                          <defs>
+                            <pattern id="excellence-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                              <circle cx="10" cy="10" r="1" fill="currentColor" className="text-accent-blue" />
+                              <path d="M 0 10 L 20 10 M 10 0 L 10 20" stroke="currentColor" strokeWidth="0.2" className="text-accent-blue" />
+                            </pattern>
+                          </defs>
+                          <rect width="100%" height="100%" fill="url(#excellence-pattern)" />
+                        </svg>
                       </div>
 
-                      {/* Back: Enhanced Information with Premium Layout */}
-                      <div
-                        className="absolute inset-0 w-full h-full rounded-3xl border-2 shadow-2xl bg-gradient-to-br from-white via-blue-50/50 to-purple-50/50 backdrop-blur-xl border-accent-blue/40"
-                        style={{
-                          backfaceVisibility: 'hidden',
-                          transform: 'rotateY(180deg)'
-                        }}
-                      >
-                        {/* Enhanced decorative corners with animation */}
+                      {/* Header */}
+                      <div className="relative z-10 text-center p-4 sm:p-6 border-b border-accent-blue/20">
+                        <motion.h3
+                          className="text-xl sm:text-2xl lg:text-3xl font-orbitron font-bold bg-gradient-to-r from-accent-blue via-purple-600 to-accent-red bg-clip-text text-transparent mb-3"
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.6 }}
+                        >
+                          Global Excellence
+                        </motion.h3>
                         <motion.div
-                          className="absolute top-6 left-6 w-16 h-16 border-l-4 border-t-4 border-accent-blue rounded-tl-2xl"
-                          animate={{
-                            opacity: flipped ? 1 : 0,
-                            scale: flipped ? 1 : 0.8,
-                          }}
-                          transition={{ duration: 0.5, delay: flipped ? 0.2 : 0 }}
+                          className="w-20 h-1 bg-gradient-to-r from-accent-blue to-accent-red rounded-full mx-auto mb-3"
+                          initial={{ width: 0 }}
+                          whileInView={{ width: "5rem" }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.8, delay: 0.3 }}
                         />
-                        <motion.div
-                          className="absolute top-6 right-6 w-16 h-16 border-r-4 border-t-4 border-accent-red rounded-tr-2xl"
-                          animate={{
-                            opacity: flipped ? 1 : 0,
-                            scale: flipped ? 1 : 0.8,
-                          }}
-                          transition={{ duration: 0.5, delay: flipped ? 0.3 : 0 }}
-                        />
-                        <motion.div
-                          className="absolute bottom-6 left-6 w-16 h-16 border-l-4 border-b-4 border-accent-red rounded-bl-2xl"
-                          animate={{
-                            opacity: flipped ? 1 : 0,
-                            scale: flipped ? 1 : 0.8,
-                          }}
-                          transition={{ duration: 0.5, delay: flipped ? 0.4 : 0 }}
-                        />
-                        <motion.div
-                          className="absolute bottom-6 right-6 w-16 h-16 border-r-4 border-b-4 border-accent-blue rounded-br-2xl"
-                          animate={{
-                            opacity: flipped ? 1 : 0,
-                            scale: flipped ? 1 : 0.8,
-                          }}
-                          transition={{ duration: 0.5, delay: flipped ? 0.5 : 0 }}
-                        />
+                        <motion.p
+                          className="text-sm sm:text-base text-gray-600 max-w-xl mx-auto"
+                          initial={{ opacity: 0 }}
+                          whileInView={{ opacity: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.8, delay: 0.5 }}
+                        >
+                          Worldwide deployment of advanced post-tensioning solutions
+                        </motion.p>
+                      </div>
 
-                        {/* Enhanced pattern overlay */}
-                        <div className="absolute inset-0 opacity-5">
-                          <svg className="w-full h-full rounded-3xl" viewBox="0 0 100 100" preserveAspectRatio="none">
-                            <defs>
-                              <pattern id="flip-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
-                                <circle cx="10" cy="10" r="1" fill="currentColor" className="text-accent-blue" />
-                                <path d="M 0 10 L 20 10 M 10 0 L 10 20" stroke="currentColor" strokeWidth="0.3" className="text-accent-blue" />
-                                <rect x="6" y="6" width="8" height="8" fill="none" stroke="currentColor" strokeWidth="0.2" className="text-accent-red" />
-                              </pattern>
-                            </defs>
-                            <rect width="100%" height="100%" fill="url(#flip-pattern)" />
-                          </svg>
-                        </div>
-
-                        <div className="relative z-10 p-4 sm:p-6 lg:p-8 h-full flex flex-col">
-                          {/* Enhanced header */}
-                          <motion.div
-                            className="text-center mb-8"
+                      {/* Main Content Area */}
+                      <div className="relative">
+                        {/* Background Image */}
+                        <motion.div
+                          className="relative overflow-hidden"
+                          animate={{
+                            height: showDetails ? "200px" : "280px"
+                          }}
+                          transition={{ duration: 0.6, ease: "easeInOut" }}
+                        >
+                          <motion.img
+                            src="/images/post-tensioning/post_intro2.jpg"
+                            alt="Post Tensioning Project - Global Excellence"
+                            className="w-full h-full object-cover"
                             animate={{
-                              opacity: flipped ? 1 : 0,
-                              y: flipped ? 0 : 20,
+                              scale: showDetails ? 1.1 : 1,
+                              opacity: showDetails ? 0.3 : 1
                             }}
-                            transition={{ duration: 0.6, delay: flipped ? 0.3 : 0 }}
+                            transition={{ duration: 0.6, ease: "easeInOut" }}
+                          />
+
+                          {/* Gradient overlay */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+                            animate={{
+                              opacity: showDetails ? 0.8 : 0.4
+                            }}
+                            transition={{ duration: 0.6 }}
+                          />
+
+                          {/* Corner accents on image */}
+                          <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-white/80 rounded-tl-lg"></div>
+                          <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-white/80 rounded-br-lg"></div>
+
+                          {/* Floating badge */}
+                          <motion.div
+                            className="absolute top-4 right-4 bg-gradient-to-r from-accent-blue to-accent-red text-white px-3 py-1 rounded-full font-orbitron font-bold text-xs shadow-lg"
+                            initial={{ scale: 0 }}
+                            whileInView={{ scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.8 }}
+                            animate={{
+                              opacity: showDetails ? 0.7 : 1
+                            }}
                           >
-                            <h3 className="text-xl sm:text-2xl lg:text-3xl font-orbitron font-bold bg-gradient-to-r from-accent-blue via-purple-600 to-accent-red bg-clip-text text-transparent mb-3">
-                              Global Excellence
-                            </h3>
-                            <motion.div
-                              className="w-20 h-1 bg-gradient-to-r from-accent-blue to-accent-red rounded-full mx-auto"
-                              animate={{
-                                width: flipped ? "5rem" : "3rem",
-                              }}
-                              transition={{ duration: 0.8, delay: flipped ? 0.5 : 0 }}
-                            />
+                            GLOBAL
                           </motion.div>
 
-                          {/* Enhanced content grid */}
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 flex-1">
-                            {[
-                              {
-                                title: "Worldwide Deployment",
-                                description: "Post-tensioning systems employed across five continents in bridges, buildings, and specialized structures.",
-                                icon: "🌍",
-                                gradient: "from-blue-500/10 to-cyan-500/10"
-                              },
-                              {
-                                title: "Technical Standards",
-                                description: "Full compliance with European Technical Approval (ETA) and comprehensive CE markings.",
-                                icon: "✅",
-                                gradient: "from-green-500/10 to-emerald-500/10"
-                              },
-                              {
-                                title: "Advanced Systems",
-                                description: "Multi-strand tendon systems with comprehensive anchorage solutions for diverse applications.",
-                                icon: "🔗",
-                                gradient: "from-purple-500/10 to-violet-500/10"
-                              },
-                              {
-                                title: "Innovation Leader",
-                                description: "Pioneering electrically insulated tendon technology for specialized engineering projects.",
-                                icon: "⚡",
-                                gradient: "from-orange-500/10 to-red-500/10"
-                              }
-                            ].map((item, idx) => (
+                          {/* View Details Button - Only show when details are hidden */}
+                          <AnimatePresence>
+                            {!showDetails && (
                               <motion.div
-                                key={idx}
-                                className={`bg-gradient-to-br ${item.gradient} backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105`}
-                                animate={{
-                                  opacity: flipped ? 1 : 0,
-                                  scale: flipped ? 1 : 0.9,
-                                  y: flipped ? 0 : 20,
-                                }}
-                                transition={{ duration: 0.5, delay: flipped ? 0.5 + idx * 0.1 : 0 }}
-                                whileHover={{
-                                  y: -5,
-                                  boxShadow: "0 20px 40px rgba(0,0,0,0.1)"
-                                }}
+                                className="absolute inset-0 flex items-center justify-center"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.3 }}
                               >
-                                <div className="flex items-start gap-2 sm:gap-3 lg:gap-4">
-                                  <motion.span
-                                    className="text-xl sm:text-2xl lg:text-3xl"
-                                    animate={{
-                                      scale: [1, 1.1, 1],
-                                    }}
-                                    transition={{
-                                      duration: 2,
-                                      repeat: Infinity,
-                                      delay: idx * 0.5
+                                <motion.button
+                                  className="bg-white/90 backdrop-blur-sm hover:bg-white text-gray-900 font-orbitron font-bold py-3 px-6 rounded-full shadow-2xl border-2 border-accent-blue/30 hover:border-accent-blue/60 transition-all duration-300"
+                                  whileHover={{
+                                    scale: 1.05,
+                                    boxShadow: "0 15px 30px rgba(0,0,0,0.2)"
+                                  }}
+                                  whileTap={{ scale: 0.95 }}
+                                  onClick={() => setShowDetails(true)}
+                                >
+                                  <span className="flex items-center gap-2">
+                                    <span>View Details</span>
+                                    <motion.span
+                                      animate={{ x: [0, 3, 0] }}
+                                      transition={{ duration: 1.5, repeat: Infinity }}
+                                    >
+                                      →
+                                    </motion.span>
+                                  </span>
+                                </motion.button>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </motion.div>
+
+                        {/* Details Section - Shows when toggled */}
+                        <AnimatePresence>
+                          {showDetails && (
+                            <motion.div
+                              className="relative z-20 p-4 sm:p-6 bg-white/95 backdrop-blur-sm"
+                              initial={{ opacity: 0, y: 20, height: 0 }}
+                              animate={{ opacity: 1, y: 0, height: "auto" }}
+                              exit={{ opacity: 0, y: -20, height: 0 }}
+                              transition={{ duration: 0.6, ease: "easeInOut" }}
+                            >
+                              {/* Close button */}
+                              <div className="flex justify-between items-center mb-4">
+                                <h4 className="text-lg font-orbitron font-bold text-gray-900">Excellence Details</h4>
+                                <button
+                                  className="text-gray-500 hover:text-gray-700 transition-colors p-1"
+                                  onClick={() => setShowDetails(false)}
+                                >
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                </button>
+                              </div>
+
+                              {/* 4 Details Grid */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                                {[
+                                  {
+                                    title: "Worldwide Deployment",
+                                    description: "Post-tensioning systems employed across five continents in bridges, buildings, and specialized structures.",
+                                    icon: "🌍",
+                                    gradient: "from-blue-500/10 to-cyan-500/10",
+                                    borderColor: "border-blue-200"
+                                  },
+                                  {
+                                    title: "Technical Standards",
+                                    description: "Full compliance with European Technical Approval (ETA) and comprehensive CE markings.",
+                                    icon: "✅",
+                                    gradient: "from-green-500/10 to-emerald-500/10",
+                                    borderColor: "border-green-200"
+                                  },
+                                  {
+                                    title: "Advanced Systems",
+                                    description: "Multi-strand tendon systems with comprehensive anchorage solutions for diverse applications.",
+                                    icon: "🔗",
+                                    gradient: "from-purple-500/10 to-violet-500/10",
+                                    borderColor: "border-purple-200"
+                                  },
+                                  {
+                                    title: "Innovation Leader",
+                                    description: "Pioneering electrically insulated tendon technology for specialized engineering projects.",
+                                    icon: "⚡",
+                                    gradient: "from-orange-500/10 to-red-500/10",
+                                    borderColor: "border-orange-200"
+                                  }
+                                ].map((item, idx) => (
+                                  <motion.div
+                                    key={idx}
+                                    className={`bg-gradient-to-br ${item.gradient} backdrop-blur-sm rounded-lg border ${item.borderColor} shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 p-4`}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.4, delay: idx * 0.1 }}
+                                    whileHover={{
+                                      y: -3,
+                                      boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
                                     }}
                                   >
-                                    {item.icon}
-                                  </motion.span>
-                                  <div className="flex-1">
-                                    <h4 className="font-orbitron font-bold text-gray-900 text-sm sm:text-base mb-1 sm:mb-2">{item.title}</h4>
-                                    <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">{item.description}</p>
-                                  </div>
-                                </div>
-                              </motion.div>
-                            ))}
-                          </div>
-                        </div>
+                                    <div className="flex items-start gap-3">
+                                      <motion.span
+                                        className="text-xl flex-shrink-0 mt-0.5"
+                                        animate={{
+                                          scale: [1, 1.1, 1],
+                                        }}
+                                        transition={{
+                                          duration: 2,
+                                          repeat: Infinity,
+                                          delay: idx * 0.5
+                                        }}
+                                      >
+                                        {item.icon}
+                                      </motion.span>
+                                      <div className="flex-1 min-w-0">
+                                        <h5 className="font-orbitron font-bold text-gray-900 text-sm mb-2 leading-tight">{item.title}</h5>
+                                        <p className="text-xs text-gray-700 leading-relaxed">{item.description}</p>
+                                      </div>
+                                    </div>
+                                  </motion.div>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                     </motion.div>
-                  </motion.div>
+                  </>
                 );
               })()}
             </motion.div>

@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import OptimizedImage from '../components/OptimizedImage';
+import OptimizedMotion from '../components/OptimizedMotion';
+import useOptimizedAOS from '../hooks/useOptimizedAOS';
+import { preloadCriticalResources } from '../utils/performance';
 import PageHero from '../components/PageHero';
 import { Building2, MapPin, Factory, Award, HardHat, Wrench, CheckCircle } from 'lucide-react';
 import { keyPoints } from '../data/aboutPageData';
@@ -40,8 +42,18 @@ const getConnectionLineClasses = (index: number) => {
 };
 
 const About: React.FC = () => {
+  // Use optimized AOS
+  useOptimizedAOS({ duration: 600, once: true, offset: 40 });
+
+  // Preload critical images
+  const criticalImages = useMemo(() => [
+    "/images/home/waikoplace.png",
+    "/313_files/Spec1.jpg",
+    "/313_files/Spec2.jpg"
+  ], []);
+
   useEffect(() => {
-    AOS.init({ duration: 900, once: true, offset: 40 });
+    preloadCriticalResources(criticalImages);
 
     // Add class to body for about page specific styling
     document.body.classList.add('about-page');
@@ -50,7 +62,7 @@ const About: React.FC = () => {
     return () => {
       document.body.classList.remove('about-page');
     };
-  }, []);
+  }, [criticalImages]);
 
   const specializationImages = [
     "/313_files/Spec1.jpg",
@@ -200,12 +212,24 @@ const About: React.FC = () => {
 
       {/* Introduction Section - Mind Map */}
       <section className="py-20 relative overflow-hidden" data-aos="fade-up">
-        {/* Consistent Grid Background - Mind Map */}
+        {/* Enhanced Background with Waiko Place Image */}
         <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/10 via-white/95 to-accent-red/10" />
+          {/* Background Image Layer */}
+          <div className="absolute inset-0">
+            <img 
+              src="/images/home/waikoplace.png" 
+              alt="Waiko Place Background"
+              className="w-full h-full object-cover object-center opacity-40 sm:opacity-50"
+            />
+            {/* Light overlay to ensure readability */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/70 to-white/60" />
+          </div>
 
-          {/* Consistent Grid Pattern with Locate Us */}
-          <div className="absolute inset-0 opacity-15">
+          {/* Subtle accent gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/5 via-transparent to-accent-red/5" />
+
+          {/* Consistent Grid Pattern with reduced visibility */}
+          <div className="absolute inset-0 opacity-5">
             <svg className="w-full h-full" aria-hidden="true">
               <defs>
                 <pattern id="mindmap-grid-pattern" width="50" height="50" patternUnits="userSpaceOnUse">
@@ -235,8 +259,9 @@ const About: React.FC = () => {
             </svg>
           </div>
 
-          <motion.div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-br from-accent-blue/25 to-purple-500/15 blur-3xl rounded-full" animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.7, 0.4], x: [-30, 30, -30], rotate: [0, 180, 360] }} transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }} />
-          <motion.div className="absolute -bottom-32 -right-32 w-80 h-80 bg-gradient-to-tl from-accent-red/25 to-pink-500/15 blur-3xl rounded-full" animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.8, 0.5], y: [-20, 20, -20], rotate: [0, -180, -360] }} transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }} />
+          {/* Animated gradient orbs with reduced opacity to not interfere with background image */}
+          <motion.div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-br from-accent-blue/15 to-purple-500/10 blur-3xl rounded-full" animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3], x: [-30, 30, -30], rotate: [0, 180, 360] }} transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }} />
+          <motion.div className="absolute -bottom-32 -right-32 w-80 h-80 bg-gradient-to-tl from-accent-red/15 to-pink-500/10 blur-3xl rounded-full" animate={{ scale: [1.2, 1, 1.2], opacity: [0.4, 0.6, 0.4], y: [-20, 20, -20], rotate: [0, -180, -360] }} transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }} />
         </div>
 
         <motion.div

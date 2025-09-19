@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import { ArrowRight, Award, Building, CheckCircle, Factory, HardHat, Target, TrendingUp, Users, Wrench, Zap } from 'lucide-react';
+import React, { useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import OptimizedImage from '../components/OptimizedImage';
 import PageHero from '../components/PageHero';
-import { Wrench, HardHat, Factory, ArrowRight, Award, Building, Users, Target, Zap, CheckCircle, TrendingUp } from 'lucide-react';
+import useOptimizedAOS from '../hooks/useOptimizedAOS';
+import { preloadCriticalResources } from '../utils/performance';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 80, scale: 0.9 },
@@ -37,6 +38,7 @@ interface GridItemProps {
     src: string;
     to: string;
     label: string;
+    alt: string;
   };
   area: string;
   idx: number;
@@ -58,9 +60,9 @@ function GridItem({ item, area, idx }: GridItemProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.05 * idx }}
         >
-          <img
+          <OptimizedImage
             src={item.src}
-            alt={item.label}
+            alt={item.alt || item.label}
             className="w-full h-full object-cover"
             loading="lazy"
           />
@@ -90,16 +92,19 @@ function GridItem({ item, area, idx }: GridItemProps) {
 }
 
 const Home: React.FC = () => {
+  // Use optimized AOS
+  useOptimizedAOS({ duration: 600, once: true, offset: 40 });
+
+  // Preload critical images
+  const criticalImages = useMemo(() => [
+    "/313_files/Spec1.jpg",
+    "/313_files/Home/Home1.jpg",
+    "/images/home/waikoplace.png"
+  ], []);
+
   useEffect(() => {
-    AOS.init({ 
-      duration: 900, 
-      once: true, 
-      offset: 40,
-      easing: 'ease-out-cubic',
-      mirror: false,
-      anchorPlacement: 'top-bottom'
-    });
-  }, []);
+    preloadCriticalResources(criticalImages);
+  }, [criticalImages]);
 
   // Memoized image click handler for better performance
   const onImageClick = React.useCallback((img: any, idx: number) => {
@@ -110,7 +115,7 @@ const Home: React.FC = () => {
     <div className="relative">
       {/* Enhanced Background with Blue & Red Gradients */}
       <div className="fixed inset-0 -z-50 bg-gradient-to-br from-accent-blue/20 via-white to-accent-red/20"></div>
-      
+
       {/* Enhanced Animated Background Elements */}
       <div className="fixed inset-0 -z-40">
         {/* Enhanced Grid Pattern with Blue & Red */}
@@ -144,7 +149,7 @@ const Home: React.FC = () => {
             <rect width="100%" height="100%" fill="url(#home-grid-pattern)" />
           </svg>
         </div>
-        
+
         {/* Secondary Grid Pattern for Depth */}
         <div className="absolute inset-0 opacity-10">
           <svg className="w-full h-full">
@@ -157,18 +162,18 @@ const Home: React.FC = () => {
             <rect width="100%" height="100%" fill="url(#home-secondary-grid)" />
           </svg>
         </div>
-        
+
         {/* Static Animated Gradient Orbs */}
         <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-accent-blue/30 to-purple-500/20 rounded-full blur-3xl opacity-60" />
         <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-tl from-accent-red/30 to-pink-500/20 rounded-full blur-3xl opacity-50" />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-accent-blue/20 to-accent-red/20 rounded-full blur-2xl opacity-40" />
-        
+
         {/* Static Floating Geometric Elements */}
         <div className="absolute top-1/4 right-1/4 w-8 h-8 bg-gradient-to-r from-accent-blue/40 to-accent-red/40 rotate-45 opacity-30" />
         <div className="absolute bottom-1/3 left-1/3 w-6 h-6 bg-gradient-to-r from-accent-red/40 to-accent-blue/40 rounded-full opacity-25" />
         <div className="absolute top-2/3 left-1/5 w-4 h-16 bg-gradient-to-b from-accent-blue/30 to-transparent rounded-full opacity-20" />
       </div>
-      
+
       {/* Content with higher z-index */}
       <div className="relative z-10">
         <PageHero
@@ -185,7 +190,7 @@ const Home: React.FC = () => {
           {/* Consistent Grid Background - Introduction */}
           <div className="pointer-events-none absolute inset-0 -z-10">
             <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/10 via-white/95 to-accent-red/10" />
-            
+
             {/* Consistent Grid Pattern */}
             <div className="absolute inset-0 opacity-15">
               <svg className="w-full h-full" aria-hidden="true">
@@ -216,7 +221,7 @@ const Home: React.FC = () => {
                 <rect width="100%" height="100%" fill="url(#intro-grid-pattern)" />
               </svg>
             </div>
-            
+
             <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-br from-accent-blue/25 to-purple-500/15 blur-3xl rounded-full opacity-60" />
             <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-gradient-to-tl from-accent-red/25 to-pink-500/15 blur-3xl rounded-full opacity-50" />
           </div>
@@ -306,7 +311,7 @@ const Home: React.FC = () => {
                   {/* Decorative elements */}
                   <div className="absolute -top-10 -right-10 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/15 blur-2xl rounded-full" />
                   <div className="absolute -bottom-10 -left-10 w-16 sm:w-24 h-16 sm:h-24 bg-gradient-to-tr from-purple-400/20 to-pink-400/15 blur-2xl rounded-full" />
-                  
+
                   <div className="relative z-10 space-y-4 sm:space-y-6">
                     {/* Company Description */}
                     <div className="space-y-3 sm:space-y-4 text-black leading-relaxed">
@@ -352,7 +357,7 @@ const Home: React.FC = () => {
           {/* Consistent Grid Background - Showcase */}
           <div className="pointer-events-none absolute inset-0 -z-10">
             <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/10 via-white/95 to-accent-red/10" />
-            
+
             {/* Consistent Grid Pattern */}
             <div className="absolute inset-0 opacity-15">
               <svg className="w-full h-full" aria-hidden="true">
@@ -383,7 +388,7 @@ const Home: React.FC = () => {
                 <rect width="100%" height="100%" fill="url(#showcase-grid-pattern)" />
               </svg>
             </div>
-            
+
             <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-br from-accent-blue/25 to-purple-500/15 blur-3xl rounded-full opacity-60" />
             <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-gradient-to-tl from-accent-red/25 to-pink-500/15 blur-3xl rounded-full opacity-50" />
           </div>
@@ -409,7 +414,7 @@ const Home: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 lg:gap-6 mb-8 sm:mb-10 lg:mb-12 max-w-full mx-auto">
               {showcaseImages.map((img, idx) => {
                 const isUp = idx % 2 === 0; // Alternating pattern: up-down-up-down-up
-                
+
                 return (
                   <motion.div
                     key={idx}
@@ -418,7 +423,7 @@ const Home: React.FC = () => {
                     whileInView={{ opacity: 1, scale: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: idx * 0.1 }}
-                    whileHover={{ 
+                    whileHover={{
                       scale: 1.05,
                       zIndex: 50,
                       rotate: idx % 2 === 0 ? 1 : -1
@@ -433,22 +438,22 @@ const Home: React.FC = () => {
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-active:scale-110"
                           loading="lazy"
                         />
-                        
+
                         {/* Enhanced Overlay Effects - Now also works on touch */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300" />
-                        
+
                         {/* Project Number */}
                         <div className="absolute top-2 left-2 sm:top-3 sm:left-3 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-lg">
                           {idx + 1}
                         </div>
-                        
+
                         {/* Hover Information - Now also works on touch */}
                         <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 group-active:translate-y-0">
                           <div className="bg-white/95 backdrop-blur-md rounded-lg sm:rounded-xl p-2 sm:p-3 text-center shadow-lg">
                             <p className="text-xs text-gray-600">Click to explore more</p>
                           </div>
                         </div>
-                        
+
                         {/* Shine Effect - Now also works on touch */}
                         <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-500">
                           <div className="absolute -left-1/3 top-0 h-full w-1/2 rotate-12 bg-white/20 blur-md translate-x-[-100%] group-hover:translate-x-[400%] group-active:translate-x-[400%] transition-transform duration-700 ease-out" />
@@ -508,7 +513,7 @@ const Home: React.FC = () => {
           {/* Consistent Grid Background - Specializations */}
           <div className="pointer-events-none absolute inset-0 -z-10">
             <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/10 via-white/95 to-accent-red/10" />
-            
+
             {/* Consistent Grid Pattern */}
             <div className="absolute inset-0 opacity-15">
               <svg className="w-full h-full" aria-hidden="true">
@@ -539,7 +544,7 @@ const Home: React.FC = () => {
                 <rect width="100%" height="100%" fill="url(#specializations-grid-pattern)" />
               </svg>
             </div>
-            
+
             <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-br from-accent-blue/25 to-purple-500/15 blur-3xl rounded-full opacity-60" />
             <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-gradient-to-tl from-accent-red/25 to-pink-500/15 blur-3xl rounded-full opacity-50" />
           </div>
@@ -623,19 +628,19 @@ const Home: React.FC = () => {
 
                     {/* Image */}
                     <div className="relative rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-6 h-32 sm:h-40 lg:h-48">
-                      <img 
-                        src={card.image} 
-                        alt={card.title} 
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-active:scale-110" 
-                        loading="lazy" 
+                      <img
+                        src={card.image}
+                        alt={card.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-active:scale-110"
+                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                      
+
                       {/* Icon Overlay */}
                       <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r ${card.color} rounded-lg sm:rounded-xl flex items-center justify-center text-white shadow-lg`}>
                         {card.icon}
                       </div>
-                      
+
                       {/* Number Badge */}
                       <div className="absolute top-3 left-3 sm:top-4 sm:left-4 w-6 h-6 sm:w-8 sm:h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-xs sm:text-sm font-bold text-gray-800 shadow-lg">
                         {idx + 1}
@@ -703,7 +708,7 @@ const Home: React.FC = () => {
           {/* Consistent Grid Background - Features */}
           <div className="pointer-events-none absolute inset-0 -z-10">
             <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/10 via-white/95 to-accent-red/10" />
-            
+
             {/* Consistent Grid Pattern */}
             <div className="absolute inset-0 opacity-15">
               <svg className="w-full h-full" aria-hidden="true">
@@ -734,7 +739,7 @@ const Home: React.FC = () => {
                 <rect width="100%" height="100%" fill="url(#features-grid-pattern)" />
               </svg>
             </div>
-            
+
             <div className="absolute -top-32 -left-32 w-96 h-96 bg-gradient-to-br from-accent-blue/25 to-purple-500/15 blur-3xl rounded-full opacity-60" />
             <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-gradient-to-tl from-accent-red/25 to-pink-500/15 blur-3xl rounded-full opacity-50" />
           </div>
@@ -747,33 +752,33 @@ const Home: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-10 lg:mb-12">
               {[
                 {
-                  to: '/projects', 
-                  title: 'Infrastructure Projects', 
-                  icon: '🏗️', 
+                  to: '/projects',
+                  title: 'Infrastructure Projects',
+                  icon: '🏗️',
                   color: 'blue',
                   bgGradient: 'bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-600',
                   pattern: 'circles'
-                }, 
+                },
                 {
-                  to: '/about', 
-                  title: 'Company Excellence', 
-                  icon: '🏢', 
+                  to: '/about',
+                  title: 'Company Excellence',
+                  icon: '🏢',
                   color: 'indigo',
                   bgGradient: 'bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500',
                   pattern: 'diagonal'
-                }, 
+                },
                 {
-                  to: '/certificates', 
-                  title: 'Quality Standards', 
-                  icon: '🏆', 
+                  to: '/certificates',
+                  title: 'Quality Standards',
+                  icon: '🏆',
                   color: 'emerald',
                   bgGradient: 'bg-gradient-to-br from-emerald-300 via-teal-400 to-cyan-500',
                   pattern: 'geometric'
-                }, 
+                },
                 {
-                  to: '/post-tensioning', 
-                  title: 'Post-Tensioning', 
-                  icon: '⚡', 
+                  to: '/post-tensioning',
+                  title: 'Post-Tensioning',
+                  icon: '⚡',
                   color: 'orange',
                   bgGradient: 'bg-gradient-to-br from-orange-300 via-red-400 to-pink-500',
                   pattern: 'waves'
@@ -782,7 +787,7 @@ const Home: React.FC = () => {
                 <motion.div key={idx} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: idx * 0.1 }} className="group">
                   <Link to={item.to} className="block">
                     <div className={`relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 hover:scale-105 min-h-[250px] sm:min-h-[300px] lg:min-h-[350px] ${item.bgGradient} text-white`}>
-                      
+
                       {/* Dynamic Background Patterns */}
                       {item.pattern === 'circles' && (
                         <div className="absolute inset-0">
@@ -791,7 +796,7 @@ const Home: React.FC = () => {
                           <div className="absolute top-1/2 left-1/3 w-12 sm:w-16 h-12 sm:h-16 bg-white/8 rounded-full blur-lg group-hover:scale-110 transition-transform duration-500" />
                         </div>
                       )}
-                      
+
                       {item.pattern === 'diagonal' && (
                         <div className="absolute inset-0">
                           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
@@ -802,7 +807,7 @@ const Home: React.FC = () => {
                           </div>
                         </div>
                       )}
-                      
+
                       {item.pattern === 'geometric' && (
                         <div className="absolute inset-0">
                           <div className="absolute top-16 right-16 w-16 sm:w-20 h-16 sm:h-20 bg-white/10 transform rotate-45 rounded-lg blur-md group-hover:rotate-90 transition-transform duration-700" />
@@ -810,7 +815,7 @@ const Home: React.FC = () => {
                           <div className="absolute top-1/3 left-1/2 w-8 sm:w-12 h-8 sm:h-12 bg-white/6 transform -rotate-45 rounded-lg blur-xl group-hover:scale-125 transition-transform duration-500" />
                         </div>
                       )}
-                      
+
                       {item.pattern === 'waves' && (
                         <div className="absolute inset-0">
                           <div className="absolute inset-0 bg-gradient-to-t from-white/8 to-transparent" />
@@ -820,10 +825,10 @@ const Home: React.FC = () => {
                           </svg>
                         </div>
                       )}
-                      
+
                       {/* Transparent White Overlay */}
                       <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px]" />
-                      
+
                       <div className="relative z-10 p-6 sm:p-8 h-full flex flex-col items-center justify-center text-center">
                         {/* Centered Icon */}
                         <div className="flex-1 flex items-center justify-center mb-6 sm:mb-8">
@@ -831,10 +836,10 @@ const Home: React.FC = () => {
                             <span className="transform group-hover:scale-105 transition-transform duration-300">{item.icon}</span>
                           </div>
                         </div>
-                        
+
                         {/* Title */}
                         <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white group-hover:text-black mb-6 sm:mb-8 group-hover:scale-105 transition-all duration-300 drop-shadow-lg">{item.title}</h3>
-                        
+
                         {/* Explore More Button */}
                         <div className="mt-auto w-full flex justify-center">
                           <div className="relative">
@@ -909,7 +914,7 @@ const Home: React.FC = () => {
                 <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-gray-300 mb-6 sm:mb-8 leading-relaxed">
                   Partner with Waiko International for innovative engineering solutions. From design to delivery, we ensure excellence in every project phase.
                 </p>
-                
+
                 {/* Key Benefits */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
                   {[
@@ -946,7 +951,7 @@ const Home: React.FC = () => {
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-1" />
                     </Link>
                   </motion.div>
-                  
+
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

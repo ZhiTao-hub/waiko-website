@@ -1,5 +1,18 @@
 {
-    "CodeGPT.apiKey": "Claude Code",
-    "git.ignoreLimitWarning": true,
-    "kiroAgent.configureMCP": "Disabled"
+  "json.schemas": [
+    {
+      "fileMatch": ["package.json"],
+      "url": "https://json.schemastore.org/package.json"
+    }
+  ],
+  "json.schemaDownload.enable": true,
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "files.associations": {
+    "*.json": "jsonc"
+  }
 }

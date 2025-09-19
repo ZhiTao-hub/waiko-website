@@ -1,16 +1,17 @@
-import React, { useState, useLayoutEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Menu,
-  X,
-  Home,
-  Info,
-  Hammer,
-  BookCheck,
-  Phone,
-  Anchor,
+    Anchor,
+    BookCheck,
+    Hammer,
+    Home,
+    Info,
+    Menu,
+    Phone,
+    X,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { memo, useCallback, useLayoutEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { throttle } from '../utils/performance';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,13 +27,18 @@ const Navbar: React.FC = () => {
     { name: 'Contact', path: '/contact', icon: <Phone size={18} /> },
   ];
 
-  useLayoutEffect(() => {
-    const handleScroll = () => {
+  // Optimized scroll handler with throttling
+  const handleScroll = useCallback(
+    throttle(() => {
       setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
+    }, 16), // ~60fps
+    []
+  );
+
+  useLayoutEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -79,40 +85,22 @@ const Navbar: React.FC = () => {
         >
           {/* Logo and Branding */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <motion.div
-              className="relative cursor-pointer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
+            <div className="relative cursor-pointer">
               <Link to="/">
-                <motion.svg
+                <svg
                   width={scrolled ? (window.innerWidth < 640 ? 32 : 42) : (window.innerWidth < 640 ? 36 : 48)}
                   height={scrolled ? (window.innerWidth < 640 ? 32 : 42) : (window.innerWidth < 640 ? 36 : 48)}
                   viewBox="0 0 100 100"
-                  className="text-accent-blue"
-                  initial={{ scale: 0.8 }}
-                  animate={{
-                    scale: scrolled ? 0.9 : 1,
-                  }}
-                  transition={{
-                    scale: { 
-                      duration: 0.3,
-                      type: "spring"
-                    },
-                  }}
+                  className="text-accent-blue transition-all duration-300"
                 >
                   <image href="/logo.png" x="0" y="0" width="100" height="100" />
-                  <motion.circle
+                  <circle
                     cx="50"
                     cy="50"
                     r="55"
                     fill="none"
                     stroke="url(#gradient)"
                     strokeWidth="2"
-                    initial={{ strokeDashoffset: 100 }}
-                    animate={{ strokeDashoffset: 0 }}
-                    transition={{ duration: 2 }}
-                    strokeDasharray="345"
                   />
                   <defs>
                     <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -121,69 +109,43 @@ const Navbar: React.FC = () => {
                       <stop offset="100%" stopColor="#ff3b3f" />
                     </linearGradient>
                   </defs>
-                </motion.svg>
+                </svg>
               </Link>
-            </motion.div>
+            </div>
             
             <div className="flex flex-col">
-              <motion.div
-                className="font-orbitron font-bold tracking-tight whitespace-nowrap drop-shadow-md"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ 
-                  opacity: 1, 
-                  y: 0,
-                  fontSize: scrolled ? (window.innerWidth < 640 ? '0.9rem' : '1.15rem') : (window.innerWidth < 640 ? '1.1rem' : '1.35rem')
-                }}
-                transition={{ duration: 0.3 }}
+              <div
+                className={`font-orbitron font-bold tracking-tight whitespace-nowrap drop-shadow-md transition-all duration-300 ${
+                  scrolled ? 'text-sm sm:text-lg' : 'text-base sm:text-xl'
+                }`}
               >
                 <span className="text-blue-900">WAIKO</span>{' '}
                 <span className="text-red-500">INTERNATIONAL</span>
-              </motion.div>
+              </div>
               
-              {/* Subtitle added under the main title */}
-              <motion.div
-                className="font-orbitron text-xs font-medium tracking-wider drop-shadow-sm"
-                initial={{ opacity: 0 }}
-                animate={{ 
-                  opacity: 1,
-                  fontSize: scrolled ? (window.innerWidth < 640 ? '0.45rem' : '0.5rem') : (window.innerWidth < 640 ? '0.5rem' : '0.55rem')
-                }}
-                transition={{ delay: 0.2, duration: 0.3 }}
+              {/* Subtitle - removed motion animations */}
+              <div
+                className={`font-orbitron font-medium tracking-wider drop-shadow-sm transition-all duration-300 ${
+                  scrolled ? 'text-xs opacity-70' : 'text-xs opacity-100'
+                }`}
               >
                 <span className="text-blue-700">Engineering</span>{' '}
                 <span className="text-purple-600">Excellence</span>{' '}
                 <span className="text-red-400">Guaranteed</span>
-              </motion.div>
+              </div>
             </div>
           </div>
 
           {/* Desktop Nav - Aligned to the right */}
           <div className="hidden md:flex items-center space-x-1 lg:space-x-2 ml-auto">
-            {navLinks.map((link, index) => {
+            {navLinks.map((link) => {
               const isActive =
                 location.pathname === link.path ||
                 (link.path !== '/' && location.pathname.startsWith(link.path));
               return (
-                <motion.div
+                <div
                   key={link.path}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ 
-                    opacity: 1, 
-                    y: 0,
-                    scale: isActive ? 1.05 : 1,
-                    boxShadow: isActive 
-                      ? '0 4px 24px rgba(37, 99, 235, 0.25)' 
-                      : 'none'
-                  }}
-                  transition={{ 
-                    delay: 0.1 * index,
-                    type: 'spring',
-                    stiffness: isActive ? 400 : 300,
-                    damping: 24
-                  }}
-                  layout
-                  whileHover={{ y: -2 }}
-                  className={`px-2 lg:px-4 py-2 rounded-lg lg:rounded-xl text-xs lg:text-sm font-bold backdrop-blur-md transition-all ${
+                  className={`px-2 lg:px-4 py-2 rounded-lg lg:rounded-xl text-xs lg:text-sm font-bold backdrop-blur-md transition-all duration-300 ${
                     isActive
                       ? 'border border-blue-200/50 shadow-glass bg-gradient-to-r from-blue-50/80 to-purple-50/80 text-blue-900'
                       : 'text-gray-700 hover:bg-white/50 border border-transparent hover:border-white/30'
@@ -195,7 +157,7 @@ const Navbar: React.FC = () => {
                       {link.name}
                     </span>
                   </Link>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -246,18 +208,13 @@ const Navbar: React.FC = () => {
                   location.pathname === link.path ||
                   (link.path !== '/' && location.pathname.startsWith(link.path));
                 return (
-                  <motion.div 
+                  <div 
                     key={link.path} 
                     className="relative"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.2 }}
-                    whileTap={{ scale: 0.98 }}
                   >
                     <Link
                       to={link.path}
-                      className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all ${
+                      className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-colors duration-200 ${
                         isActive
                           ? 'text-blue-700 bg-blue-50/80 font-bold'
                           : 'text-gray-700 hover:text-blue-600 hover:bg-white/50'
@@ -269,13 +226,12 @@ const Navbar: React.FC = () => {
                       </div>
                       <span className="truncate">{link.name}</span>
                       {isActive && (
-                        <motion.div
+                        <div
                           className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 -z-10"
-                          layoutId="mobileNavIndicator"
                         />
                       )}
                     </Link>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
@@ -286,4 +242,4 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar;
+export default memo(Navbar);

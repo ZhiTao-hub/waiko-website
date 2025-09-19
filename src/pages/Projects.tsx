@@ -1,24 +1,18 @@
 
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import PageHero from '../components/PageHero';
-import ProjectCard from '../components/ProjectCard';
-import MalaysiaProjectsSection from '../components/MalaysiaProjectsSection';
-import { 
-  Building2, 
-  Train, 
-  MapPin, 
-  Calendar, 
-  Users, 
-  Globe,
-  Award,
-  CheckCircle,
-  X,
-  ChevronLeft,
-  ChevronRight
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+    Building2,
+    ChevronLeft,
+    ChevronRight,
+    Globe,
+    MapPin,
+    X
 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import MalaysiaProjectsSection from '../components/MalaysiaProjectsSection';
+import PageHero from '../components/PageHero';
 
 
 
@@ -53,6 +47,19 @@ interface CoreBusinessSections {
 
 // International projects for compatibility
 const internationalProjects: ProjectItem[] = [
+  {
+    title: "Tunnel Formwork (Shutter) - Ulu Jelai Hydro Electric Project",
+    client: "Hydro Electric Authority",
+    period: "",
+    location: "Pahang, Malaysia",
+    type: "Tunnel",
+    image: "/313_files/project_img/Others/pahang1.jpg",
+    category: "pahang",
+    images: [
+      "/313_files/project_img/Others/pahang1.jpg",
+      "/313_files/project_img/Others/pahang2.jpg"
+    ]
+  },
   {
     title: "Manila North South Corridor Railway",
     client: "Sumitomo Mitsui",

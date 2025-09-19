@@ -1,89 +1,193 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import About from './pages/About';
-import PostTensioning from './pages/PostTensioning';
-import Certificates from './pages/Certificates';
-import Contact from './pages/Contact';
-import Projects from './pages/Projects';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
+import FullScreenLoader from './components/FullScreenLoader';
+import GlobalErrorBoundary from './components/GlobalErrorBoundary';
+import PageErrorBoundary from './components/PageErrorBoundary';
+import usePerformanceMonitor from './hooks/usePerformanceMonitor';
+// Initialize global error handler
 import BackToTopButton from './components/BackToTopButton';
+import ErrorTestButton from './components/ErrorTestButton';
+import Footer from './components/Footer';
+import Navbar from './components/Navbar';
+import './utils/globalErrorHandler';
 
-// Refresh redirect component - Modified to be less aggressive
+// Lazy load all pages for better performance
+const Home = lazy(() => import('./pages/Home'));
+const About = lazy(() => import('./pages/About'));
+const PostTensioning = lazy(() => import('./pages/PostTensioning'));
+const Certificates = lazy(() => import('./pages/Certificates'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Projects = lazy(() => import('./pages/Projects'));
+const ErrorPage = lazy(() => import('./pages/ErrorPage'));
+
+// Simple loading component for route transitions
+const PageLoader: React.FC = () => (
+  <div className="flex items-center justify-center min-h-[50vh]">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent-blue mb-2"></div>
+      <p className="text-gray-600 text-sm">Loading...</p>
+    </div>
+  </div>
+);
+
+// Optimized refresh redirect component - now handles 404 errors
 const RefreshRedirect: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Check if this is a page refresh
-    const isRefresh = performance.navigation.type === 1;
-    
-    // Only redirect on refresh if we're on a non-homepage path
-    // This prevents unwanted redirects while maintaining the intended functionality
-    if (isRefresh && location.pathname !== '/' && location.pathname !== '/projects' && 
-        location.pathname !== '/post-tensioning' && location.pathname !== '/certificates' && 
-        location.pathname !== '/about' && location.pathname !== '/contact') {
-      console.log('Refresh detected on unknown path', location.pathname, '- redirecting to homepage');
-      window.location.href = '/';
+    // Valid routes - removed automatic redirect to allow 404 handling
+    const validRoutes = ['/', '/projects', '/post-tensioning', '/certificates', '/about', '/contact', '/error'];
+
+    // Log invalid routes for debugging but don't redirect automatically
+    if (!validRoutes.includes(location.pathname)) {
+      console.log('Invalid route accessed:', location.pathname);
     }
   }, [location.pathname]);
 
   return null;
 };
 
+// Main Layout component with navbar and footer
+interface MainLayoutProps {
+  children: React.ReactNode;
+  scrollProgress: number;
+  isInitialLoading: boolean;
+}
+
+const MainLayout: React.FC<MainLayoutProps> = ({ children, scrollProgress, isInitialLoading }) => {
+  return (
+    <div className={`flex flex-col min-h-screen bg-primary-light transition-all duration-500 ${isInitialLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'
+      }`}>
+      <PageErrorBoundary>
+        <Navbar />
+      </PageErrorBoundary>
+      <main className="flex-grow">
+        {children}
+      </main>
+      <PageErrorBoundary>
+        <Footer />
+      </PageErrorBoundary>
+      {/* Back to Top Button - Right, always visible on all pages */}
+      <div className="fixed right-4 bottom-4 z-50">
+        <PageErrorBoundary>
+          <BackToTopButton scrollProgress={scrollProgress} />
+        </PageErrorBoundary>
+      </div>
+      {/* Error Test Button - Development Only */}
+      <ErrorTestButton />
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-  // App-level refresh detection - Modified to be less aggressive
+  // Monitor performance metrics
+  usePerformanceMonitor();
+
+  // Handle initial loading state
   useEffect(() => {
-    const isRefresh = performance.navigation.type === 1;
-    const currentPath = window.location.pathname;
-    
-    console.log('App level check - Path:', currentPath, 'Is refresh:', isRefresh);
-    
-    // Only redirect on refresh if we're on a non-homepage path
-    if (isRefresh && currentPath !== '/' && currentPath !== '/projects' && 
-        currentPath !== '/post-tensioning' && currentPath !== '/certificates' && 
-        currentPath !== '/about' && currentPath !== '/contact') {
-      console.log('App level refresh detected on unknown path - redirecting to homepage');
-      window.location.href = '/';
-    }
+    const timer = setTimeout(() => {
+      setIsInitialLoading(false);
+    }, 3000); // 3秒的loading時間
+
+    return () => clearTimeout(timer);
   }, []);
 
-  // Handle scroll progress for back to top button
+  // Optimized scroll progress tracking with throttling
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? Math.min(scrollY / docHeight, 1) : 0;
-      setScrollProgress(progress);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = docHeight > 0 ? Math.min(scrollY / docHeight, 1) : 0;
+          setScrollProgress(progress);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+
+    // Use passive listener for better performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+
+
   return (
-    <Router>
-      <RefreshRedirect />
-      <div className="flex flex-col min-h-screen bg-primary-light transition-colors duration-300">
-        <Navbar />
-        <main className="flex-grow">
+    <GlobalErrorBoundary>
+      <Router>
+        <RefreshRedirect />
+        {/* WebVitalsMonitor temporarily disabled until web-vitals package is installed */}
+        {/* <WebVitalsMonitor /> */}
+
+        {/* Full Screen Loader */}
+        <FullScreenLoader isLoading={isInitialLoading} />
+
+        <Suspense fallback={<PageLoader />}>
           <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/post-tensioning" element={<PostTensioning />} />
-              <Route path="/certificates" element={<Certificates />} />
-              <Route path="/contact" element={<Contact />} />
-            </Routes>
-          </main>
-          <Footer />
-          {/* Back to Top Button - Right, always visible on all pages */}
-          <div className="fixed right-4 bottom-4 z-50">
-            <BackToTopButton scrollProgress={scrollProgress} />
-          </div>
-        </div>
+            {/* Error page routes - Full screen without navbar/footer */}
+            <Route path="/error" element={<ErrorPage />} />
+            <Route path="*" element={<ErrorPage />} />
+
+            {/* Normal pages with layout */}
+            <Route path="/" element={
+              <MainLayout
+                scrollProgress={scrollProgress}
+                isInitialLoading={isInitialLoading}
+              >
+                <PageErrorBoundary><Home /></PageErrorBoundary>
+              </MainLayout>
+            } />
+            <Route path="/about" element={
+              <MainLayout
+                scrollProgress={scrollProgress}
+                isInitialLoading={isInitialLoading}
+              >
+                <PageErrorBoundary><About /></PageErrorBoundary>
+              </MainLayout>
+            } />
+            <Route path="/projects" element={
+              <MainLayout
+                scrollProgress={scrollProgress}
+                isInitialLoading={isInitialLoading}
+              >
+                <PageErrorBoundary><Projects /></PageErrorBoundary>
+              </MainLayout>
+            } />
+            <Route path="/post-tensioning" element={
+              <MainLayout
+                scrollProgress={scrollProgress}
+                isInitialLoading={isInitialLoading}
+              >
+                <PageErrorBoundary><PostTensioning /></PageErrorBoundary>
+              </MainLayout>
+            } />
+            <Route path="/certificates" element={
+              <MainLayout
+                scrollProgress={scrollProgress}
+                isInitialLoading={isInitialLoading}
+              >
+                <PageErrorBoundary><Certificates /></PageErrorBoundary>
+              </MainLayout>
+            } />
+            <Route path="/contact" element={
+              <MainLayout
+                scrollProgress={scrollProgress}
+                isInitialLoading={isInitialLoading}
+              >
+                <PageErrorBoundary><Contact /></PageErrorBoundary>
+              </MainLayout>
+            } />
+          </Routes>
+        </Suspense>
       </Router>
+    </GlobalErrorBoundary>
   );
 };
 

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Anchor } from 'lucide-react';
+import OptimizedImage from './OptimizedImage';
 
 interface AnchorTypeCardProps {
   title: string;
@@ -10,7 +11,7 @@ interface AnchorTypeCardProps {
   colorIndex?: number;
 }
 
-const AnchorTypeCard: React.FC<AnchorTypeCardProps> = ({
+const AnchorTypeCard: React.FC<AnchorTypeCardProps> = memo(({
   title,
   description,
   features,
@@ -67,12 +68,18 @@ const AnchorTypeCard: React.FC<AnchorTypeCardProps> = ({
         <h3 className="text-xl font-bold text-gray-900 group-hover:text-accent-blue mb-3 font-orbitron transition-colors duration-300">{title}</h3>
         {image && (
           <div className="mb-4 flex justify-center">
-            <motion.img
-              src={image}
-              alt={title}
-              className="max-h-40 object-contain rounded-lg group-hover:scale-105 transition-transform duration-300"
+            <motion.div
+              className="max-h-40 rounded-lg overflow-hidden"
               whileHover={{ scale: 1.05 }}
-            />
+              transition={{ duration: 0.3 }}
+            >
+              <OptimizedImage
+                src={image}
+                alt={title}
+                className="max-h-40 object-contain rounded-lg group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </motion.div>
           </div>
         )}
         <p className="text-gray-700 mb-4 line-clamp-3 leading-relaxed">{description}</p>
@@ -102,6 +109,8 @@ const AnchorTypeCard: React.FC<AnchorTypeCardProps> = ({
       </div>
     </motion.div>
   );
-};
+});
+
+AnchorTypeCard.displayName = 'AnchorTypeCard';
 
 export default AnchorTypeCard;
